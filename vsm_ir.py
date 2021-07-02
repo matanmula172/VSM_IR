@@ -12,5 +12,5 @@ def read_f():
         for elem in rest:
             print(elem)
 
-
+#
 read_f() #Test
