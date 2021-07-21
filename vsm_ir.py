@@ -25,14 +25,14 @@ if __name__ == '__main__':
         query = str(sys.argv[3:])
         index_path = str(sys.argv[2])
         data = CorpusData(filenames, index_path)
-        doc_tf_idf_dictionary = dict(load_json_file(index_path))
+        inverted_index = dict(load_json_file(index_path))
+        tf_idf_dict = inverted_index["tf_idf"]
+        data.word_over_docs = inverted_index["words_over_docs"]
+        data.num_documents = inverted_index["num_documents"]
         tokens = stem_tokenized_text(remove_stop_words(tokenize_text_no_punctuation(query)))
-        word_over_docs = dict(load_json_file("words_over_docs.json"))
-        data.word_over_docs = word_over_docs
-        data.num_documents = 1239
 
         tf_idf_query = query_tf_idf(data, tokens)
 
-        ranked_documents = rank_documents(doc_tf_idf_dictionary, tf_idf_query, list(word_over_docs.keys()))
+        ranked_documents = rank_documents(tf_idf_dict, tf_idf_query, list(data.word_over_docs.keys()))
 
         create_ranked_query_docs(ranked_documents)

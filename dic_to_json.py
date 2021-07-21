@@ -12,14 +12,18 @@ def load_json_file(file_path):
 
 def dump_json_file(path):
     data = CorpusData(filenames, path)
-    doc_tf_idf_dictionary = data.tf_idf_data()
+    doc_tf_idf_dictionary, words_over_docs, num_documents = data.tf_idf_data()
+    vsm_inverted_dic = dict()
+    vsm_inverted_dic["tf_idf"] = doc_tf_idf_dictionary
+    vsm_inverted_dic["words_over_docs"] = words_over_docs
+    vsm_inverted_dic["num_documents"] = num_documents
     with open("vsm_inverted_index.json", "w") as outfile:
-        json.dump(doc_tf_idf_dictionary, outfile)
+        json.dump(vsm_inverted_dic, outfile)
 
 
-def dump_words_over_docs():
-    data = CorpusData(filenames, None)
-    doc_tf_idf_dictionary = data.tf_idf_data()
-    word_over_docs = data.word_over_docs
-    with open("words_over_docs.json", "w") as outfile:
-        json.dump(word_over_docs, outfile)
+# def dump_words_over_docs():
+#     data = CorpusData(filenames, None)
+#     doc_tf_idf_dictionary = data.tf_idf_data()
+#     word_over_docs = data.word_over_docs
+#     with open("words_over_docs.json", "w") as outfile:
+#         json.dump(word_over_docs, outfile)

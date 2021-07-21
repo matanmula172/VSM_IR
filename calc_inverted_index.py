@@ -113,4 +113,4 @@ class CorpusData:
                 tf_dic = get_tf_ij_value(tokenized_text)
                 tf_dic = self.get_document_weight_arr(tf_dic)
                 doc_tf_idf_dictionary[doc_id] = tf_dic
-        return doc_tf_idf_dictionary
+        return doc_tf_idf_dictionary, self.word_over_docs, self.num_documents
