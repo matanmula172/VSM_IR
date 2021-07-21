@@ -13,7 +13,7 @@ def query_tf_idf(data, tokens):
 
 def create_ranked_query_docs(ranked_documents):
     with open("ranked_query_docs.txt", "w") as ranked_query_docs:
-        for doc in ranked_documents[:100]:
+        for doc in ranked_documents[:50]:
             ranked_query_docs.write(doc[1] + '\n')
 
 
