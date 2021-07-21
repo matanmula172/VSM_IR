@@ -1,31 +1,38 @@
-import math
-import os.path
-import nltk
-import numpy as np
-import json
-import lxml.html
-
-import dic_to_json
-from corpus_data import *
+import sys
 from dic_to_json import *
 
-# Psuedo main
 
-data = CorpusData(filenames)
-doc_tf_idf_dictionary = dict(load_json_file("corpus_tf_idf.json"))
+# calculate query TF_IDF
+def query_tf_idf(data, tokens):
+    tf_dict = dict()
+
+    for i in range(len(tokens)):
+        tf_dict[tokens[i]] = (float(tokens.count(tokens[i])) / float(len(tokens)))
+    return data.get_document_weight_arr(tf_dict)
 
 
-query = "pancreatic enzyme deficiency and abnormally high sweat"
-tokens = stem_tokenized_text(remove_stop_words(tokenize_text_no_punctuation(query)))
-word_over_docs = dict(load_json_file("words_over_docs.json"))
-num_documents = len(list(doc_tf_idf_dictionary.keys()))
+def create_ranked_query_docs(ranked_documents):
+    with open("ranked_query_docs.txt", "w") as ranked_query_docs:
+        for doc in ranked_documents[:100]:
+            ranked_query_docs.write(doc[1] + '\n')
 
-tf_dic = dict()
-# calculate TFij
-for i in range(len(tokens)):
-    tf_dic[tokens[i]] = (float(tokens.count(tokens[i])) / float(len(tokens)))
 
-tf_idf_query = get_query_weight_arr(tokens, tf_dic, word_over_docs, num_documents)
+if __name__ == '__main__':
+    if sys.argv[1] == 'create_index':
+        path = sys.argv[2]
+        dump_json_file(path)
+    else:
+        query = str(sys.argv[3:])
+        index_path = str(sys.argv[2])
+        data = CorpusData(filenames, index_path)
+        doc_tf_idf_dictionary = dict(load_json_file(index_path))
+        tokens = stem_tokenized_text(remove_stop_words(tokenize_text_no_punctuation(query)))
+        word_over_docs = dict(load_json_file("words_over_docs.json"))
+        data.word_over_docs = word_over_docs
+        data.num_documents = 1239
 
-ranked_documents = rank_documents(doc_tf_idf_dictionary, tf_idf_query)
-print(ranked_documents)
+        tf_idf_query = query_tf_idf(data, tokens)
+
+        ranked_documents = rank_documents(doc_tf_idf_dictionary, tf_idf_query, list(word_over_docs.keys()))
+
+        create_ranked_query_docs(ranked_documents)
